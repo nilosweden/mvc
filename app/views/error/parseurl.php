@@ -1,3 +1,6 @@
+<?php
+    $responseData = $response->getData();
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -12,22 +15,18 @@
 <div class="container">
   <div class="jumbotron">
     <h1>Error parsing url</h1>
-    <p>A error occurred when trying to parse the following URL:<br><span style="color: green;"><?= urldecode($response['info']['url']); ?></span></p>
+    <p>A error occurred when trying to parse the following URL:<br><span style="color: green;"><?php write(urldecode($responseData['info']['url'])); ?></span></p>
     <br>
     <h2>This part of the url is causing this error</h2>
-    <p><span style="color: green;"><?= $response['data']['arguments']; ?></span></p>
+    <p><span style="color: green;"><?php write($responseData['data']['arguments']); ?></span></p>
     <?php
-    if (!empty($response['data']['message'])) {
-        echo '<p>Error message: ' . $response['data']['message'] . '</p>';
+    if (!empty($responseData['data']['message'])) {
+        echo '<p>Error message: ' . $responseData['data']['message'] . '</p>';
     }
     else {
         echo '<p>This should be valid json data, are you missing a bracket?</p>';
     }
     ?>
-    <br>
-    <p>
-      <a class="btn btn-lg btn-primary" href="#jira" role="button">Report this bug in Jira &raquo;</a>
-    </p>
   </div>
 
 </div>

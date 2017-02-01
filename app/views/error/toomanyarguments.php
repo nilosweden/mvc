@@ -1,3 +1,6 @@
+<?php
+    $responseData = $response->getData();
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -12,8 +15,16 @@
 <div class="container">
   <div class="jumbotron">
     <h1>Unnecessary arguments</h1>
-    <p>There was a problem processing: <span style="color: green;"><?= $response['info']['url']; ?></span> as <span style="color: green;"><b><?= $response['info']['method']; ?></b></span> request</p>
-    <p>The following arguments is not needed when doing the request: <b><?= implode(', ', array_keys($response['data']['arguments'])); ?></b></p>
+    <p>
+        There was a problem processing:
+        <span style="color: green;">
+            <?php write($responseData['info']['url']); ?></span> as <span style="color: green;"><b><?php write($responseData['info']['method']); ?></b>
+        </span> request
+    </p>
+    <p>
+        The following arguments is not needed when doing the request:
+        <b><?php write(implode(', ', array_keys($responseData['data']['arguments']))); ?></b>
+    </p>
   </div>
 
 </div>

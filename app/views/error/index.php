@@ -1,3 +1,6 @@
+<?php
+    $responseData = $response->getData();
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -11,15 +14,10 @@
 <br>
 <div class="container">
   <div class="jumbotron">
-    <h1>404 - <?= $response['data']['message']; ?></h1>
-    <p>There was a problem processing: <span style="color: green;"><?= $response['info']['url']; ?></span> as <span style="color: green;"><b><?= $response['info']['method']; ?></b></span> request</p>
-    <p>This controller/method does not exist: <b><?= htmlspecialchars($response['data']['method'], ENT_QUOTES, 'utf-8'); ?></b></p>
-    <p>Check the URL and try again. If you think this url should work, report it as a bug to jira.</p>
-    <p>
-      <a class="btn btn-lg btn-primary" href="#jira" role="button">Report this bug in Jira &raquo;</a>
-    </p>
+    <h1>404 - <?= $responseData['data']['message']; ?></h1>
+    <p>There was a problem processing: <span style="color: green;"><?php write($responseData['info']['url']); ?></span> as <span style="color: green;"><b><?php write($responseData['info']['method']); ?></b></span> request</p>
+    <p>This controller/method does not exist: <b><?php write($responseData['data']['method']); ?></b></p>
   </div>
-
 </div>
 <script src="/mvc/lib/jquery/jquery.min.js"></script>
 <script src="/mvc/lib/bootstrap/js/bootstrap.min.js"></script>

@@ -12,12 +12,12 @@ class Route
 
     public function __construct($defaultController = 'index', $defaultMethod = 'index')
     {
-        set_error_handler('app\core\Route::myErrorHandler');
+        set_error_handler('app\core\Route::errorHandler');
         $this->controller = $defaultController;
         $this->method = $defaultMethod;
     }
 
-    public function myErrorHandler($errno, $errstr, $errfile, $errline)
+    public function errorHandler($errno, $errstr, $errfile, $errline)
     {
         if (E_RECOVERABLE_ERROR === $errno) {
             Route::showErrorPage('catchableError', array(
@@ -41,7 +41,7 @@ class Route
                 'message' => 'Controller not found'
             ));
         }
-        $class = 'app\controllers\\' . $this->controller;
+        $class = '\app\controllers\\' . $this->controller;
         $this->controllerObj = new $class();
         if (!method_exists($this->controllerObj, $this->method)) {
             $this->showErrorPage('methodNotFound', array(
@@ -141,6 +141,17 @@ class Route
                 if ($numArgsPassed < 0) {
                     $this->showErrorPage('missingargument', array('argument' => $param->getName()));
                 }
+            }
+            echo $numArgsPassed;
+            die();
+            if ($numArgsPassed) {
+                $unnecessaryArgs = array();
+                foreach ($this->params as $param) {
+                    $unnecessaryArgs[$param] = $param;
+                }
+                $this->showErrorPage('tooManyArguments', array(
+                    'arguments' => $unnecessaryArgs
+                ));
             }
         }
     }
@@ -252,17 +263,17 @@ class Route
         return $json;
     }
 
-    private function showErrorPage($method, array $userData = array())
+    private static function showErrorPage($method, array $userData = array())
     {
-        $errorData = array(
+        $error = array(
             'data' => $userData,
             'info' => array(
                 'url' => $_SERVER['REQUEST_URI'],
                 'method' => $_SERVER['REQUEST_METHOD']
             )
         );
-        $content = base64url_encode(json_encode($errorData));
-        header('Location: /mvc/error/' . $method . '/' . $content);
+        $errorObject = new \app\controllers\error();
+        $errorObject->{$method}($error);
         die();
     }
 }

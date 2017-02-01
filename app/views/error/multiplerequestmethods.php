@@ -1,3 +1,6 @@
+<?php
+    $responseData = $response->getData();
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -12,13 +15,13 @@
 <div class="container">
   <div class="jumbotron">
     <h1>Multiple request methods</h1>
-    <p>There was a problem processing: <span style="color: green;"><?= $response['info']['url']; ?></span> as <span style="color: green;"><b><?= $response['info']['method']; ?></b></span> request</p>
+    <p>There was a problem processing: <span style="color: green;"><?php write($responseData['info']['url']); ?></span> as <span style="color: green;"><b><?php write($responseData['info']['method']); ?></b></span> request</p>
     <p>
     We are unable to handle this request due to multiple request methods or the way the arguments was sent.<br>
-    This problem is due to one of the following reasons since this is a <?= mb_strtolower($response['info']['method']); ?> request:
+    This problem is due to one of the following reasons since this is a <?php write(mb_strtolower($responseData['info']['method'])); ?> request:
     </p>
 <?php
-    if ($response['info']['method'] == 'GET') {
+    if ($responseData['info']['method'] == 'GET') {
 ?>
     <ul>
         <li>Arguments can be sent either with /controller/method/arg1/arg2 etc...</li>

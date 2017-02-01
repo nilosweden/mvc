@@ -4,17 +4,17 @@ namespace app\core;
 class Request
 {
     private $requestType = null;
-    private $parameters = array();
+    private $args = array();
 
-    public function __construct($requestType, array $parameters)
+    public function __construct($requestType, array $args)
     {
         $this->requestType = $requestType;
-        $this->parameters = $parameters;
+        $this->args = $args;
     }
 
     public function getArgs()
     {
-        return $this->parameters;
+        return $this->args;
     }
 
     public function getType()

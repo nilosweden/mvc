@@ -2,6 +2,7 @@
 namespace app\controllers;
 
 use app\core\Controller as Controller;
+use app\core\Response as Response;
 
 class Error extends Controller
 {
@@ -10,62 +11,59 @@ class Error extends Controller
         echo $this->load->view(
             'error/index',
             array(
-                'message' => 'This is the default error page',
-                'page' => 'Example controller or method'
+                'data' => array(
+                    'message' => 'This is the default error page',
+                    'page' => 'Example controller or method',
+                    'method' => 'test method'
+                ),
+                'info' => array(
+                    'url' => 'example url',
+                    'method' => 'GET'
+                )
             )
         );
     }
 
     public function controllerNotFound($content)
     {
-        $error = json_decode(base64url_decode($content), true);
-        echo $this->load->view('error/index', $error);
+        echo $this->load->view('error/index', $content);
     }
 
     public function methodNotFound($content)
     {
-        $error = json_decode(base64url_decode($content), true);
-        echo $this->load->view('error/index', $error);
+        echo $this->load->view('error/index', $content);
     }
 
     public function unsupportedHttpMethod($content)
     {
-        $error = json_decode(base64url_decode($content), true);
-        echo $this->load->json(array(
-            'The following request type: ' . $error['method'] . 'is not supported'
-        ));
+        echo $this->load->json($content);
     }
 
     public function tooManyArguments($content)
     {
-        $error = json_decode(base64url_decode($content), true);
-        echo $this->load->view('error/toomanyarguments', $error);
+        echo $this->load->view('error/toomanyarguments', $content);
     }
 
     public function missingArgument($content)
     {
-        $error = json_decode(base64url_decode($content), true);
-        echo $this->load->view('error/missingargument', $error);
+        echo $this->load->view('error/missingargument', $content);
     }
 
     public function multipleRequestMethods($content)
     {
-        $error = json_decode(base64url_decode($content), true);
         echo $this->load->view(
             'error/multiplerequestmethods',
-            $error
+            $content
         );
     }
 
     public function catchableError($content)
     {
-        $error = json_decode(base64url_decode($content), true);
-        echo $this->load->view('error/catchable', $error);
+        echo $this->load->view('error/catchable', $content);
     }
 
     public function parseUrl($content)
     {
-        $error = json_decode(base64url_decode($content), true);
-        echo $this->load->view('error/parseurl', $error);
+        echo $this->load->view('error/parseurl', $content);
     }
 }

@@ -12,14 +12,17 @@ class Load
     public function __construct()
     {}
 
-    public function view($view, array $response = array())
+    public function view($view, $data = null)
     {
+        $response = new Response($data);
         $file = 'app/views/' . mb_strtolower($view) . '.php';
         if (!file_exists($file)) {
             throw new LoadException(sprintf('View: %s does not exist', $view));
         }
         ob_start();
-        require_once($file);
+        require($file);
+        unset($file);
+        unset($view);
         return ob_get_clean();
     }
 

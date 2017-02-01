@@ -1,3 +1,6 @@
+<?php
+    $responseData = $response->getData();
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -12,11 +15,11 @@
 <div class="container">
   <div class="jumbotron">
     <h1>Oops, something went wrong</h1>
-    <p><?= $response['data']['errstr']; ?></p>
+    <p><?= $responseData['data']['errstr']; ?></p>
     <h2>In file</h2>
-    <p><?= $response['data']['errfile']; ?></p>
+    <p><?= $responseData['data']['errfile']; ?></p>
     <h2>On line</h2>
-    <p><?= $response['data']['errline']; ?></p>
+    <p><?= $responseData['data']['errline']; ?></p>
     <p>
       <a class="btn btn-lg btn-primary" href="#jira" role="button">Report this bug in Jira &raquo;</a>
     </p>

@@ -1,3 +1,6 @@
+<?php
+    $responseData = $response->getData();
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -12,11 +15,11 @@
 <div class="container">
   <div class="jumbotron">
     <h1>Missing argument in request</h1>
-    <p>There was a problem processing: <span style="color: green;"><?= $response['info']['url']; ?></span> as <span style="color: green;"><b><?= $response['info']['method']; ?></b></span> request</p>
+    <p>There was a problem processing: <span style="color: green;"><?php write($responseData['info']['url']); ?></span> as <span style="color: green;"><b><?php write($responseData['info']['method']); ?></b></span> request</p>
     <?php
-    if (!empty($response['data']['argument'])) {
+    if (!empty($responseData['data']['argument'])) {
     ?>
-    <p>The following argument needs to be provided and should not be empty: <b><?= $response['data']['argument']; ?></b></p>
+    <p>The following argument needs to be provided and should not be empty: <b><?php write($responseData['data']['argument']); ?></b></p>
     <?php
     }
     else {

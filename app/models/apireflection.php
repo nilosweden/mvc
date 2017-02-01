@@ -10,14 +10,13 @@ class ApiReflection
 
     public function __construct($class, array $excludeMethods = array())
     {
-        $controllerExcludedMethods = array(
-            '__construct',
-            'index',
-            'setRequest'
-        );
-        foreach ($controllerExcludedMethods as $method) {
-            if (!in_array($method, $excludeMethods)) {
-                $excludeMethods[] = $method;
+        if (is_subclass_of($class, '\app\core\Controller')) {
+            $reflectionClass = new ReflectionClass('\app\core\Controller');
+            $methods = $reflectionClass->getMethods(ReflectionMethod::IS_PUBLIC);
+            foreach ($methods as $method) {
+                if (!in_array($method, $excludeMethods)) {
+                    $excludeMethods[] = $method->name;
+                }
             }
         }
         $reflectionClass = new ReflectionClass($class);
