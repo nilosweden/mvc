@@ -2,11 +2,12 @@
 namespace app\core;
 
 use ReflectionMethod;
+use ReflectionParameter;
 
 class Route
 {
-    protected $controller;
-    protected $method;
+    protected $controller = null;
+    protected $method = null;
     protected $params = array();
     protected $controllerObj = null;
 
@@ -17,7 +18,7 @@ class Route
         $this->method = $defaultMethod;
     }
 
-    public function errorHandler($errno, $errstr, $errfile, $errline)
+    public static function errorHandler($errno, $errstr, $errfile, $errline)
     {
         if (E_RECOVERABLE_ERROR === $errno) {
             Route::showErrorPage('catchableError', array(
@@ -34,13 +35,14 @@ class Route
         $url = isset($_GET['url']) ? $_GET['url'] : '';
         $unparsedArguments = null;
         $this->parseUrlAndSetController($url, $unparsedArguments);
-        $file = 'app/controllers/' . $this->controller . '.php';
+        $file = 'app/controllers/' . mb_strtolower($this->controller) . '.php';
         if (!file_exists($file)) {
             $this->showErrorPage('controllerNotFound', array(
                 'method' => $this->controller,
                 'message' => 'Controller not found'
             ));
         }
+
         $class = '\app\controllers\\' . $this->controller;
         $this->controllerObj = new $class();
         if (!method_exists($this->controllerObj, $this->method)) {
@@ -49,13 +51,15 @@ class Route
                 'message' => 'Method not found'
             ));
         }
+
         $refObj = new ReflectionMethod($class, $this->method);
+        $refParams = $refObj->getParameters();
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $this->handlePostRequest($unparsedArguments, $refObj);
+            $this->handlePostRequest($unparsedArguments, $refParams);
         }
         else if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-            $this->handleGetRequest($unparsedArguments, $refObj);
+            $this->handleGetRequest($unparsedArguments, $refParams);
         }
         else {
             $this->showErrorPage('unsupportedHttpMethod', array(
@@ -70,14 +74,15 @@ class Route
         call_user_func_array(array($this->controllerObj, $this->method), $this->params);
     }
 
-    private function handlePostRequest($unparsedArguments, &$refObj)
+    private function handlePostRequest($unparsedArguments, &$refParams)
     {
         if ($unparsedArguments) {
             $this->showErrorPage('multipleRequestMethods');
         }
-        $refParams = $refObj->getParameters();
+        $methodArgumentHints = array();
         foreach ($refParams as $param) {
             $name = $param->getName();
+            $methodArgumentHints[] = $this->getParameterTypeHinting($param);
             $optional = $param->isOptional();
             if (empty($_POST[$name]) && $optional==false) {
                 $this->showErrorPage('missingArgument', array(
@@ -94,19 +99,20 @@ class Route
                 'arguments' => $_POST
             ));
         }
-        $this->parseArguments($unparsedArguments);
+        $this->parseArguments($unparsedArguments, $methodArgumentHints);
     }
 
-    private function handleGetRequest($unparsedArguments, &$refObj)
+    private function handleGetRequest(&$unparsedArguments, &$refParams)
     {
         if (isset($_GET['url'])) {
             unset($_GET['url']);
         }
-        if (!$unparsedArguments) {
-            unset($_GET['url']);
-            $refParams = $refObj->getParameters();
+
+        if (empty($unparsedArguments)) {
+            $methodArgumentHints = array();
             foreach ($refParams as $param) {
                 $name = $param->getName();
+                $methodArgumentHints[] = $this->getParameterTypeHinting($param);
                 $optional = $param->isOptional();
                 if (empty($_GET[$name]) && $optional==false) {
                     $this->showErrorPage('missingArgument', array(
@@ -118,12 +124,14 @@ class Route
                     unset($_GET[$name]);
                 }
             }
+
             if ($_GET) {
                 $this->showErrorPage('tooManyArguments', array(
                     'arguments' => $_GET
                 ));
             }
-            $this->parseArguments($unparsedArguments);
+
+            $this->parseArguments($unparsedArguments, $methodArgumentHints);
         }
         else {
             if ($_GET) {
@@ -131,29 +139,47 @@ class Route
                     $this->showErrorPage('multipleRequestMethods');
                 }
             }
-            $this->parseArguments($unparsedArguments);
-            $numArgsPassed = sizeof($this->params);
-            $refParams = $refObj->getParameters();
+
+            $methodArgumentHints = array();
             foreach ($refParams as $param) {
-                if (!$param->isOptional()) {
+                $methodArgumentHints[] = $this->getParameterTypeHinting($param);
+            }
+            $this->parseArguments($unparsedArguments, $methodArgumentHints);
+            $numArgsPassed = sizeof($this->params);
+
+            foreach ($refParams as $param) {
+                if (!$param->isOptional() || $numArgsPassed > 0) {
                     --$numArgsPassed;
                 }
                 if ($numArgsPassed < 0) {
                     $this->showErrorPage('missingargument', array('argument' => $param->getName()));
                 }
             }
-            echo $numArgsPassed;
-            die();
+
             if ($numArgsPassed) {
                 $unnecessaryArgs = array();
                 foreach ($this->params as $param) {
                     $unnecessaryArgs[$param] = $param;
+                    echo $param . " " . $numArgsPassed . "<hr>";
                 }
                 $this->showErrorPage('tooManyArguments', array(
                     'arguments' => $unnecessaryArgs
                 ));
             }
         }
+    }
+
+    private function getParameterTypeHinting(ReflectionParameter $param)
+    {
+        preg_match(
+            '/\[ ([A-Z\\a-z0-9]+) \$/',
+            $param->__toString(),
+            $matches
+        );
+        if (isset($matches[1])) {
+            return trim(str_replace('<required>', '', $matches[1]));
+        }
+        return null;
     }
 
     private function parseUrlAndSetController($url, &$unparsedArguments)
@@ -171,6 +197,7 @@ class Route
         else {
             $parsedUrl = explode('/', $url);
         }
+
         if (!empty($parsedUrl[0])) {
             $this->controller = $parsedUrl[0];
             if (!empty($parsedUrl[1])) {
@@ -179,53 +206,55 @@ class Route
         }
     }
 
-    private function parseArguments($arguments)
+    private function parseArguments(&$unparsedArguments, &$methodArguments)
     {
         $parsedArgs = array();
         $closingChar = array(
             '{' => '}',
             '[' => ']'
         );
-        while ($arguments) {
-            if (!empty($closingChar[$arguments[0]])) {
-                $firstChar = $arguments[0];
-                $posEnding = strpos($arguments, $closingChar[$firstChar] . '/');
+        $i = 0;
+        while ($unparsedArguments != '') {
+            if (!empty($methodArguments[$i]) && !empty($closingChar[$unparsedArguments[0]])) {
+                $firstChar = $unparsedArguments[0];
+                $posEnding = strpos($unparsedArguments, $closingChar[$firstChar] . '/');
 
                 if ($posEnding === false) {
-                    $posEnding = strlen($arguments);
-                    $lastChar = mb_substr($arguments, -1);
+                    $posEnding = strlen($unparsedArguments);
+                    $lastChar = mb_substr($unparsedArguments, -1);
                 }
                 else {
-                    $lastChar = $arguments[$posEnding];
+                    $lastChar = $unparsedArguments[$posEnding];
                 }
 
                 if ($lastChar == $closingChar[$firstChar]) {
-                    $parsedArgs[] = $this->parseJson(mb_substr($arguments, 0, $posEnding + 1));
-                    $arguments = mb_substr($arguments, $posEnding + 2);
+                    $parsedArgs[] = $this->parseJson(mb_substr($unparsedArguments, 0, $posEnding + 1));
+                    $unparsedArguments = mb_substr($unparsedArguments, $posEnding + 2);
                 }
                 else {
-                    $posEnding = strpos($arguments, $closingChar[$firstChar] . '/');
+                    $posEnding = strpos($unparsedArguments, $closingChar[$firstChar] . '/');
                     if ($posEnding === false) {
                         $this->showErrorPage('parseUrl', array(
-                            'arguments' => $arguments
+                            'arguments' => $unparsedArguments
                         ));
                     }
-                    $parsedArgs[] = $this->parseJson(mb_substr($arguments, 0, $posEnding + 1));
-                    $arguments = mb_substr($arguments, $posEnding+2);
+                    $parsedArgs[] = $this->parseJson(mb_substr($unparsedArguments, 0, $posEnding + 1));
+                    $unparsedArguments = mb_substr($unparsedArguments, $posEnding+2);
                 }
             }
             else {
-                $posEnding = strpos($arguments, '/');
+                $posEnding = strpos($unparsedArguments, '/');
                 if ($posEnding !== false) {
-                    $parsedArgs[] = mb_substr($arguments, 0, $posEnding);
-                    $arguments = mb_substr($arguments, $posEnding + 1);
+                    $parsedArgs[] = mb_substr($unparsedArguments, 0, $posEnding);
+                    $unparsedArguments = mb_substr($unparsedArguments, $posEnding + 1);
                 }
                 else {
-                    $parsedArgs[] = $arguments;
-                    $arguments = null;
+                    $parsedArgs[] = $unparsedArguments;
+                    $unparsedArguments = null;
                     break;
                 }
             }
+            ++$i;
         }
         $this->params = $parsedArgs;
     }
