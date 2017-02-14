@@ -20,16 +20,8 @@ class Route
             throw new RouteException($e->getMessage(), $e->getCode(), $e);
         }
 
-        $file = 'app/controllers/' . mb_strtolower($controller) . '.php';
-        if (!file_exists($file)) {
-            throw new RouteException('Controller ' . $controller . ' does not exist');
-        }
-
         $class = '\app\controllers\\' . $controller;
         $controllerObj = new $class();
-        if (!method_exists($controllerObj, $method)) {
-            throw new RouteException('Method ' . $method . ' does not exist');
-        }
 
         $requestObj = new Request($_SERVER['REQUEST_METHOD'], $params);
         $controllerObj->setRequest($requestObj);

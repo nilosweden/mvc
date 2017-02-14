@@ -124,7 +124,16 @@ class Parser
 
     private function getParametersForMethod()
     {
+        $file = 'app/controllers/' . mb_strtolower($this->controller) . '.php';
+        if (!file_exists($file)) {
+            throw new RouteException('Controller "' . $this->controller . '" does not exist');
+        }
+
         $ref = new ReflectionClass('\app\controllers\\' . $this->controller);
+        if (!$ref->hasMethod($this->method)) {
+            throw new RouteException('Method "' . $this->method . '" does not exist');
+        }
+
         $params = $ref->getMethod($this->method)->getParameters();
         foreach ($params as $param) {
             $this->methodParameters[] = [

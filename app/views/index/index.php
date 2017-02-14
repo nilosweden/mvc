@@ -35,8 +35,12 @@ if ($type != '') {
     <h1>Make POST request</h1>
     <p>URL: /mvc/userapi/add</p>
     <form method="post" action="/mvc/userapi/add">
-    <input type="text" name="kebab">
-    <input type="text" name="test">
+    <label>Arg1:</label>
+    <input type="text" name="arg1" placeholder="some values">
+    <br>
+    <label>Arg2:</label>
+    <input type="text" name="arg2" placeholder="json array or object" value='["key1", "key2", 15]'>
+    <br>
     <input type="submit">
     </form>
   </div>
@@ -50,7 +54,8 @@ if ($type != '') {
     <select name="type">
     <option value="DELETE">DELETE</option>
     <option value="PUT">PUT</option>
-    <option value="invalid">invalid</option>
+    <option value="POST">POST</option>
+    <option value="SOMETHING">SOMETHING</option>
     </select>
     <br>
     <label>Arguments:</label>
