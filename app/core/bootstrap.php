@@ -1,29 +1,46 @@
-<?php
+<?php declare(strict_types=1);
 namespace app\core;
 
 use app\core\Route as Route;
 use app\core\Session as Session;
+use ErrorException;
+use TypeError;
 
 class Bootstrap
 {
-    public function __construct()
+    public static function init($callback = null)
     {
         require('app/core/global.php');
         require('app/core/autoloader.php');
         Autoloader::register();
+        set_error_handler('app\Core\Bootstrap::errorHandler');
+
+        try {
+            require('lib/autoload.php');
+            if ($callback !== null) {
+                $callback();
+            }
+            Route::dispatch(new Session());
+        }
+        catch (ErrorException $e) {
+            $error = new \app\controllers\error();
+            $error->viewException($e);
+        }
+        catch (TypeError $e) {
+            $error = new \app\controllers\error();
+            $error->viewException($e);
+        }
+        catch (RouteException $e) {
+            $error = new \app\controllers\error();
+            $error->viewException($e);
+        }
     }
 
-    public function init($callback = null)
+    public static function errorHandler($errno, $errstr, $errfile, $errline)
     {
-        require('lib/autoload.php');
-
-        if ($callback !== null) {
-            $callback();
+        if (error_reporting() === 0) {
+            return false;
         }
-
-        // Setup routing
-        $sessionObj = new Session();
-        $route = new Route();
-        $route->handleRequest($sessionObj);
+        throw new ErrorException($errstr, 0, $errno, $errfile, $errline);
     }
 }

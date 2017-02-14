@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 namespace app\models;
 
 use ReflectionClass;
@@ -6,9 +6,9 @@ use ReflectionMethod;
 
 class ApiReflection
 {
-    protected $apiMethods = array();
+    protected $apiMethods = [];
 
-    public function __construct($class, array $excludeMethods = array())
+    public function __construct($class, array $excludeMethods = [])
     {
         if (is_subclass_of($class, '\app\core\Controller')) {
             $reflectionClass = new ReflectionClass('\app\core\Controller');
@@ -21,7 +21,6 @@ class ApiReflection
         }
         $reflectionClass = new ReflectionClass($class);
         $methods = $reflectionClass->getMethods(ReflectionMethod::IS_PUBLIC);
-        $apiMethods = array();
         $index = 0;
         foreach ($methods as $method) {
             $methodParams = $method->getParameters();

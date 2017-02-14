@@ -1,8 +1,9 @@
-<?php
+<?php declare(strict_types=1);
 namespace app\controllers;
 
 use app\core\Controller as Controller;
 use app\core\Response as Response;
+use Throwable;
 
 class Error extends Controller
 {
@@ -24,46 +25,8 @@ class Error extends Controller
         );
     }
 
-    public function controllerNotFound($content)
+    public function viewException(Throwable $exception)
     {
-        echo $this->load->view('error/index', $content);
-    }
-
-    public function methodNotFound($content)
-    {
-        echo $this->load->view('error/index', $content);
-    }
-
-    public function unsupportedHttpMethod($content)
-    {
-        echo $this->load->json($content);
-    }
-
-    public function tooManyArguments($content)
-    {
-        echo $this->load->view('error/toomanyarguments', $content);
-    }
-
-    public function missingArgument($content)
-    {
-        echo $this->load->view('error/missingargument', $content);
-    }
-
-    public function multipleRequestMethods($content)
-    {
-        echo $this->load->view(
-            'error/multiplerequestmethods',
-            $content
-        );
-    }
-
-    public function catchableError($content)
-    {
-        echo $this->load->view('error/catchable', $content);
-    }
-
-    public function parseUrl($content)
-    {
-        echo $this->load->view('error/parseurl', $content);
+        echo $this->load->view('error/index', $exception);
     }
 }

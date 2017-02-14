@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 function base64url_encode($data)
 {
     return rtrim(strtr(base64_encode($data), '+/', '-_'), '=');

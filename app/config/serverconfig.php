@@ -11,7 +11,7 @@ class ServerConfig extends Config
             'default' => array(
                 'default' => array(
                     'username' => 'root',
-                    'database' => 'db',
+                    'database' => 'mvc',
                     'driver' => 'mysql',
                     'prefix' => '',
                     'host' => '127.0.0.1',

@@ -1,3 +1,24 @@
+<?php
+function curl_del($apiurl, $type, $args)
+{
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, "www.fsx.se" . $apiurl);
+    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, strtoupper($type));
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $args);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    $result = curl_exec($ch);
+    curl_close($ch);
+    return $result;
+}
+
+$type = $_GET['type'] ?? '';
+$args = $_GET['args'] ?? '';
+$apiurl = $_GET['apiurl'] ?? '';
+$result = '';
+if ($type != '') {
+    $result = curl_del($apiurl, $type, $args);
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -11,8 +32,35 @@
 <br>
 <div class="container">
   <div class="jumbotron">
-    <h1>FSX Framework</h1>
-    <p>Test it, like it, use it</p>
+    <h1>Make POST request</h1>
+    <p>URL: /mvc/userapi/add</p>
+    <form method="post" action="/mvc/userapi/add">
+    <input type="text" name="kebab">
+    <input type="text" name="test">
+    <input type="submit">
+    </form>
+  </div>
+  <div class="jumbotron">
+    <h1>Make CUSTOM request</h1>
+    <form method="get" action="?">
+    <label>URL:</label>
+    <input type="text" name="apiurl" placeholder="url to api" value="/mvc/userapi/remove">
+    <br>
+    <label>Request type:</label>
+    <select name="type">
+    <option value="DELETE">DELETE</option>
+    <option value="PUT">PUT</option>
+    <option value="invalid">invalid</option>
+    </select>
+    <br>
+    <label>Arguments:</label>
+    <input type="text" name="args" placeholder="arguments">
+    <br>
+    <input type="submit">
+    </form>
+  </div>
+  <div class="jumbotron">
+  <?= $result; ?>
   </div>
 </div>
 <script src="/mvc/lib/jquery/jquery.min.js"></script>

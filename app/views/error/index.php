@@ -1,5 +1,9 @@
 <?php
-    $responseData = $response->getData();
+    $exception = $response->getData();
+    $host = $_SERVER['HTTP_HOST'] ?? '';
+    $uri = $_SERVER['REQUEST_URI'] ?? '';
+    $method = $_SERVER['REQUEST_METHOD'] ?? '';
+    $currentLink = 'http://' . $host . $uri;
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -14,9 +18,24 @@
 <br>
 <div class="container">
   <div class="jumbotron">
-    <h1>404 - <?= $responseData['data']['message']; ?></h1>
-    <p>There was a problem processing: <span style="color: green;"><?php write($responseData['info']['url']); ?></span> as <span style="color: green;"><b><?php write($responseData['info']['method']); ?></b></span> request</p>
-    <p>This controller/method does not exist: <b><?php write($responseData['data']['method']); ?></b></p>
+    <h1>Oops, something went wrong!</h1>
+    <p>
+        There was a problem processing: <span style="color: green;"><?php write($currentLink); ?></span>
+        as <span style="color: green;"><b><?php write($method); ?></b></span> request
+    </p>
+    <p>
+        <b>Message:</b> <?php write($exception->getMessage()); ?>
+        <br>
+        <b>Exception:</b> <?php write(get_class($exception)); ?>
+        <br>
+        <b>File:</b> <?php write($exception->getFile()); ?>
+        <br>
+        <b>Line:</b> <?php write((string)$exception->getLine()); ?>
+        <br>
+        <br>
+        <b>Trace:</b>
+        <pre><?php write($exception->getTraceAsString()); ?></pre>
+    </p>
   </div>
 </div>
 <script src="/mvc/lib/jquery/jquery.min.js"></script>

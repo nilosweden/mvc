@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 namespace app\core;
 
 class Request
@@ -12,12 +12,12 @@ class Request
         $this->args = $args;
     }
 
-    public function getArgs()
+    public function getArguments() : array
     {
         return $this->args;
     }
 
-    public function getType()
+    public function getType() : string
     {
         return $this->requestType;
     }
