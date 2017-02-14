@@ -9,4 +9,5 @@
 /**
  * Load database
  */
-require('sql/vendor/autoload.php');
+
+// require('database/vendor/autoload.php');
