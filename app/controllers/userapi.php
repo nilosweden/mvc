@@ -11,7 +11,7 @@ class UserApi extends Controller
         echo $this->load->json($cls->getMethods());
     }
 
-    public function add($arg1 = null, array $arg2)
+    public function add(array $arg1 = null, array $arg2)
     {
         echo $this->load->json([$this->request->getType(), $arg1, $arg2]);
     }

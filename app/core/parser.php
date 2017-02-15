@@ -22,9 +22,10 @@ class Parser
 
     private function parse()
     {
-        $this->parseUrl($_GET['url'] ?? '');
-        $method = $_SERVER['REQUEST_METHOD'] ?? '';
+        $this->parseUrl();
         $this->getParametersForMethod();
+
+        $method = $_SERVER['REQUEST_METHOD'] ?? '';
         switch($method)
         {
             case 'POST':
@@ -67,29 +68,23 @@ class Parser
         return $this->methodParameters;
     }
 
-    private function parseUrl(string $url)
+    private function parseUrl()
     {
-        preg_match_all('/\//', $url, $matches, PREG_OFFSET_CAPTURE);
-        $parsedUrl = array();
-
-        if (sizeof($matches[0]) > 1) {
-            $matchPos = $matches[0][1][1];
-            $partialUrl = mb_substr($url, 0, $matchPos);
-            $parsedUrl = explode('/', $partialUrl);
-            $arguments = mb_substr($url, $matchPos);
-            $this->unparsedArguments = ($arguments == '/') ? '' : mb_substr($arguments, 1);
-        }
-        else {
-            $parsedUrl = explode('/', $url);
-        }
-
-        if (!empty($parsedUrl[0])) {
-            $this->controller = $parsedUrl[0];
-            if (!empty($parsedUrl[1])) {
-                $this->method = $parsedUrl[1];
+        if (!empty($_GET['_reserved_url'])) {
+            $parsedUrl = explode('/', $_GET['_reserved_url']);
+            if (!empty($parsedUrl[0])) {
+                $this->controller = $parsedUrl[0];
+                unset($parsedUrl[0]);
+                if (!empty($parsedUrl[1])) {
+                    $this->method = $parsedUrl[1];
+                    unset($parsedUrl[1]);
+                }
             }
+            if (!empty($parsedUrl[2])) {
+                $this->unparsedArguments = implode('/', $parsedUrl);
+            }
+            unset($_GET['_reserved_url']);
         }
-        unset($_GET['url']);
     }
 
     private static function parseJson(string $data, $toArray=false)
@@ -153,7 +148,7 @@ class Parser
             );
         }
         foreach ($this->methodParameters as $index => $param) {
-            $this->params[$index] = $_POST[$param['name']] ?? null;
+            $this->params[$index] = rawurldecode($_POST[$param['name']]) ?? null;
         }
     }
 
@@ -167,7 +162,7 @@ class Parser
         }
         parse_str(file_get_contents('php://input'), $vars);
         foreach ($this->methodParameters as $index => $param) {
-            $this->params[$index] = $vars[$param['name']] ?? null;
+            $this->params[$index] = rawurldecode($vars[$param['name']]) ?? null;
         }
     }
 
@@ -175,6 +170,9 @@ class Parser
     {
         if (empty($_GET)) {
             $this->params = explode('/', parse_url($this->unparsedArguments, PHP_URL_PATH));
+            foreach ($this->methodParameters as $index => $param) {
+                $this->params[$index] = rawurldecode($this->params[$index]);
+            }
         }
         else {
             if (!empty($this->unparsedArguments)) {
@@ -184,7 +182,7 @@ class Parser
                 );
             }
             foreach ($this->methodParameters as $index => $param) {
-                $this->params[$index] = $_GET[$param['name']] ?? null;
+                $this->params[$index] = rawurldecode($_GET[$param['name']]) ?? null;
             }
         }
     }
