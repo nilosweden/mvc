@@ -9,12 +9,15 @@ class LoadException extends Exception
 
 class Load
 {
-    public function __construct()
-    {}
+    private $session = null;
+
+    public function __construct(Session $session)
+    {
+        $this->session = $session;
+    }
 
     public function view($view, $data = null)
     {
-        $response = new Response($data);
         $file = 'app/views/' . mb_strtolower($view) . '.php';
         if (!file_exists($file)) {
             throw new LoadException(sprintf('View: %s does not exist', $view));
@@ -39,12 +42,11 @@ class Load
             $result['data'] = $jsonData;
         }
         header('Content-Type: application/json');
-        return json_encode($result);
+        return json_encode($result, JSON_UNESCAPED_UNICODE);
     }
 
     public function jsonException(Exception $ex)
     {
-        header('Content-Type: application/json');
         $result = array(
             'success' => false,
             'error' => array(
@@ -52,6 +54,7 @@ class Load
                 'message' => $ex->getMessage()
             )
         );
-        return json_encode($result);
+        header('Content-Type: application/json');
+        return json_encode($result, JSON_UNESCAPED_UNICODE);
     }
 }

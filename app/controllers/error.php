@@ -11,17 +11,7 @@ class Error extends Controller
     {
         echo $this->load->view(
             'error/index',
-            array(
-                'data' => array(
-                    'message' => 'This is the default error page',
-                    'page' => 'Example controller or method',
-                    'method' => 'test method'
-                ),
-                'info' => array(
-                    'url' => 'example url',
-                    'method' => 'GET'
-                )
-            )
+            new \Exception("This is a test exception to show you how the error page looks")
         );
     }
 

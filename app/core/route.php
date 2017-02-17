@@ -8,7 +8,7 @@ class RouteException extends Exception
 
 class Route
 {
-    public static function dispatch(Session $sessionObj)
+    public static function dispatch()
     {
         try {
             $parser = new Parser();
@@ -22,10 +22,6 @@ class Route
 
         $class = '\app\controllers\\' . $controller;
         $controllerObj = new $class();
-
-        $requestObj = new Request($_SERVER['REQUEST_METHOD'], $params);
-        $controllerObj->setRequest($requestObj);
-        $controllerObj->setSession($sessionObj);
         call_user_func_array(array($controllerObj, $method), $params);
     }
 }

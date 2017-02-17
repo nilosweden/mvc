@@ -11,7 +11,6 @@ function curl_del($apiurl, $type, $args)
     curl_close($ch);
     return $result;
 }
-
 $type = $_GET['type'] ?? '';
 $args = $_GET['args'] ?? '';
 $apiurl = $_GET['apiurl'] ?? '';

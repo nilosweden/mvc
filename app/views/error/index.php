@@ -1,5 +1,5 @@
 <?php
-    $exception = $response->getData();
+    $exception = $data;
     $host = $_SERVER['HTTP_HOST'] ?? '';
     $uri = $_SERVER['REQUEST_URI'] ?? '';
     $method = $_SERVER['REQUEST_METHOD'] ?? '';

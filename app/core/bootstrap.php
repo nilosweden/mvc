@@ -20,7 +20,7 @@ class Bootstrap
             if ($callback !== null) {
                 $callback();
             }
-            Route::dispatch(new Session());
+            Route::dispatch();
         }
         catch (ErrorException $e) {
             $error = new \app\controllers\error();
@@ -31,6 +31,10 @@ class Bootstrap
             $error->viewException($e);
         }
         catch (RouteException $e) {
+            $error = new \app\controllers\error();
+            $error->viewException($e);
+        }
+        catch (ControllerException $e) {
             $error = new \app\controllers\error();
             $error->viewException($e);
         }
