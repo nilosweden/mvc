@@ -1,8 +1,9 @@
 <?php
 function curl_del($apiurl, $type, $args)
 {
+    $host = $_SERVER['HTTP_HOST'];
     $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, "www.fsx.se" . $apiurl);
+    curl_setopt($ch, CURLOPT_URL, "http://" . $host . $apiurl);
     curl_setopt($ch, CURLOPT_CUSTOMREQUEST, strtoupper($type));
     curl_setopt($ch, CURLOPT_POSTFIELDS, $args);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
