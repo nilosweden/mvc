@@ -148,7 +148,7 @@ class Parser
             );
         }
         foreach ($this->methodParameters as $index => $param) {
-            $this->params[$index] = rawurldecode($_POST[$param['name']]) ?? null;
+            $this->params[$index] = rawurldecode($_POST[$param['name']] ?? '');
         }
     }
 
@@ -162,7 +162,7 @@ class Parser
         }
         parse_str(file_get_contents('php://input'), $vars);
         foreach ($this->methodParameters as $index => $param) {
-            $this->params[$index] = rawurldecode($vars[$param['name']]) ?? null;
+            $this->params[$index] = rawurldecode($vars[$param['name']] ?? '');
         }
     }
 
