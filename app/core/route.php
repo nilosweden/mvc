@@ -3,7 +3,7 @@ namespace app\core;
 
 use Exception;
 
-class RouteException extends Exception
+class RouteException extends CoreException
 {}
 
 class Route
@@ -21,7 +21,6 @@ class Route
         }
 
         $class = '\app\controllers\\' . $controller;
-        $controllerObj = new $class();
-        call_user_func_array(array($controllerObj, $method), $params);
+        call_user_func_array(array(new $class(), $method), $params);
     }
 }

@@ -4,7 +4,7 @@ namespace app\core;
 use ReflectionClass;
 use Exception;
 
-class LoadException extends Exception
+class LoadException extends CoreException
 {}
 
 class Load

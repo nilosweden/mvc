@@ -3,7 +3,7 @@ namespace app\core;
 
 use Exception;
 
-class SessionException extends Exception
+class SessionException extends CoreException
 {}
 
 class Session
@@ -13,9 +13,12 @@ class Session
         if (session_status() == PHP_SESSION_NONE) {
             session_start();
         }
-        if (empty($_SESSION['token'])) {
-            $_SESSION['token'] = bin2hex(random_bytes(32));
-        }
+    }
+
+    public function generateToken()
+    {
+        $_SESSION['token'] = bin2hex(random_bytes(32));
+        return $_SESSION['token'];
     }
 
     public function set($key, $value)

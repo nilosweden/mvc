@@ -5,6 +5,10 @@ use app\core\Route as Route;
 use app\core\Session as Session;
 use ErrorException;
 use TypeError;
+use Exception;
+
+class CoreException extends Exception
+{}
 
 class Bootstrap
 {
@@ -30,11 +34,7 @@ class Bootstrap
             $error = new \app\controllers\error();
             $error->viewException($e);
         }
-        catch (RouteException $e) {
-            $error = new \app\controllers\error();
-            $error->viewException($e);
-        }
-        catch (ControllerException $e) {
+        catch (CoreException $e) {
             $error = new \app\controllers\error();
             $error->viewException($e);
         }

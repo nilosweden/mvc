@@ -11,9 +11,9 @@ class UserApi extends Controller
         echo $this->load->json($cls->getMethods());
     }
 
-    public function add(array $arg1, array $arg2)
+    public function add(array $arg1, array $arg2, $token)
     {
-        echo $this->load->json([$this->session->get("token"), $arg1, $arg2]);
+        echo $this->load->json([$this->session->get("token"), $token, $arg1, $arg2]);
     }
 
     public function remove($username)

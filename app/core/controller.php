@@ -3,7 +3,7 @@ namespace app\core;
 
 use Exception;
 
-class ControllerException extends Exception
+class ControllerException extends CoreException
 {}
 
 abstract class Controller

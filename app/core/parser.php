@@ -4,7 +4,7 @@ namespace app\core;
 use Exception;
 use ReflectionClass;
 
-class ParserException extends Exception
+class ParserException extends CoreException
 {}
 
 class Parser
@@ -63,7 +63,7 @@ class Parser
         return $this->controller;
     }
 
-    public function getMethodParameters() : array
+    private function getMethodParameters() : array
     {
         return $this->methodParameters;
     }
@@ -121,12 +121,12 @@ class Parser
     {
         $file = 'app/controllers/' . mb_strtolower($this->controller) . '.php';
         if (!file_exists($file)) {
-            throw new RouteException('Controller "' . $this->controller . '" does not exist');
+            throw new ParserException('Controller "' . $this->controller . '" does not exist');
         }
 
         $ref = new ReflectionClass('\app\controllers\\' . $this->controller);
         if (!$ref->hasMethod($this->method)) {
-            throw new RouteException('Method "' . $this->method . '" does not exist');
+            throw new ParserException('Method "' . $this->method . '" does not exist');
         }
 
         $params = $ref->getMethod($this->method)->getParameters();
@@ -171,7 +171,7 @@ class Parser
         if (empty($_GET)) {
             $this->params = explode('/', parse_url($this->unparsedArguments, PHP_URL_PATH));
             foreach ($this->methodParameters as $index => $param) {
-                $this->params[$index] = rawurldecode($this->params[$index]);
+                $this->params[$index] = rawurldecode($this->params[$index] ?? '');
             }
         }
         else {
@@ -182,7 +182,7 @@ class Parser
                 );
             }
             foreach ($this->methodParameters as $index => $param) {
-                $this->params[$index] = rawurldecode($_GET[$param['name']]) ?? null;
+                $this->params[$index] = rawurldecode($_GET[$param['name']] ?? '');
             }
         }
     }
@@ -203,7 +203,7 @@ class Parser
                     }
                     catch (ParserException $e) {
                         throw new ParserException(
-                            'Failed to convert json to type "' . $param['type'] . '" for parameter "'
+                            'Failed to convert json data to type "' . $param['type'] . '" for parameter "'
                             . $param['name'] . '" with message: ' . $e->getMessage()
                         );
                     }
@@ -214,7 +214,7 @@ class Parser
                     }
                     catch (ParserException $e) {
                         throw new ParserException(
-                            'Failed to convert json to type "' . $param['type'] . '" for parameter "'
+                            'Failed to convert json data to type "' . $param['type'] . '" for parameter "'
                             . $param['name'] . '" with message: ' . $e->getMessage()
                         );
                     }
