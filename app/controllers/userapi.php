@@ -18,6 +18,6 @@ class UserApi extends Controller
 
     public function remove($username)
     {
-        echo $this->load->json("ok");
+        echo $this->load->json($username);
     }
 }

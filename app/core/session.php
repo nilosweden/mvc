@@ -1,8 +1,6 @@
 <?php declare(strict_types=1);
 namespace app\core;
 
-use Exception;
-
 class SessionException extends CoreException
 {}
 

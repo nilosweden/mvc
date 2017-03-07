@@ -2,7 +2,6 @@
 namespace app\core;
 
 use app\core\Route as Route;
-use app\core\Session as Session;
 use ErrorException;
 use TypeError;
 use Exception;
@@ -14,10 +13,10 @@ class Bootstrap
 {
     public static function init($callback = null)
     {
+        set_error_handler('app\Core\Bootstrap::errorHandler');
         require('app/core/global.php');
         require('app/core/autoloader.php');
         Autoloader::register();
-        set_error_handler('app\Core\Bootstrap::errorHandler');
 
         try {
             require('lib/autoload.php');

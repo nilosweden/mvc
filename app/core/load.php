@@ -1,7 +1,6 @@
 <?php declare(strict_types=1);
 namespace app\core;
 
-use ReflectionClass;
 use Exception;
 
 class LoadException extends CoreException
@@ -35,25 +34,12 @@ class Load
 
         if ($errorMessage) {
             $result['success'] = false;
-            $result['errorMessage'] = $errorMessage;
+            $result['message'] = $errorMessage;
         }
         else {
             $result['success'] = true;
             $result['data'] = $jsonData;
         }
-        header('Content-Type: application/json');
-        return json_encode($result, JSON_UNESCAPED_UNICODE);
-    }
-
-    public function jsonException(Exception $ex)
-    {
-        $result = array(
-            'success' => false,
-            'error' => array(
-                'code' => $ex->getCode(),
-                'message' => $ex->getMessage()
-            )
-        );
         header('Content-Type: application/json');
         return json_encode($result, JSON_UNESCAPED_UNICODE);
     }

@@ -1,7 +1,6 @@
 <?php declare(strict_types=1);
 namespace app\core;
 
-use Exception;
 use ReflectionClass;
 
 class ParserException extends CoreException
@@ -192,7 +191,7 @@ class Parser
         foreach ($this->methodParameters as $index => $param) {
             if (empty($this->params[$index])) {
                 throw new ParserException(
-                    'You are missing parameter "' . $param['name'] . '" in for method ' . $this->method . '()'
+                    'You are missing parameter "' . $param['name'] . '" for method ' . $this->method . '()'
                 );
             }
 
