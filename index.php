@@ -20,7 +20,7 @@ catch (Exception $e) {
      *
      * CoreException                Base exception for all core exceptions
      *      ControllerException     Inherits from CoreException
-     *      LoadException           Inherits from CoreException
+     *      ViewException           Inherits from CoreException
      *      ParserException         Inherits from CoreException
      *      RouteException          Inherits from CoreException
      *      SessionException        Inherits from CoreException
