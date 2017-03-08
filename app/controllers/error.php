@@ -2,7 +2,6 @@
 namespace app\controllers;
 
 use app\core\Controller as Controller;
-use app\core\Response as Response;
 use Throwable;
 
 class Error extends Controller
