@@ -1,5 +1,5 @@
 # mvc
-Simple MVC Framework for PHP
+Simple MVC Framework for PHP 7 (only)
 
 ##Use
 When creating a new controller, the name of the controller will be the route/url. This framework will also make sure that the correct number of parameters are passed to the functions inside your controller. 
