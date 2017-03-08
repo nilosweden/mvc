@@ -17,7 +17,6 @@ class Route
         catch (ParserException $e) {
             throw new RouteException($e->getMessage(), $e->getCode(), $e);
         }
-
         $class = '\app\controller\\' . $controller;
         call_user_func_array(array(new $class(), $method), $params);
     }

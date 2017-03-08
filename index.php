@@ -24,6 +24,7 @@ catch (Exception $e) {
      *      ParserException         Inherits from CoreException
      *      RouteException          Inherits from CoreException
      *      SessionException        Inherits from CoreException
+     *      CSRFException           Inherits from CoreException
      *
      * ErrorException               Catchable errors will also throw ErrorException
      */

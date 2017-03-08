@@ -42,6 +42,7 @@ if ($type != '') {
     <label>Arg2:</label>
     <input type="text" name="arg2" placeholder="json array or object" value='["key1", "key2", 15]'>
     <br>
+    <?= core\CSRF::token(); ?>
     <input type="submit">
     </form>
   </div>

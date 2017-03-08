@@ -140,6 +140,9 @@ class Parser
 
     private function parsePostArguments()
     {
+        if (CSRF::isset()) {
+            CSRF::check($_POST[CSRF::name()] ?? '');
+        }
         if (!empty($this->unparsedArguments)) {
             throw new RouteException(
                 'You are not allowed to use multiple request types. Either send args as named arguments'

@@ -18,6 +18,19 @@ class Session
         $_SESSION[$key] = $value;
     }
 
+    public static function remove($key)
+    {
+        unset($_SESSION[$key]);
+    }
+
+    public static function isset($key)
+    {
+        if (!isset($_SESSION[$key])) {
+            return false;
+        }
+        return true;
+    }
+
     public static function get($key)
     {
         if (!isset($_SESSION[$key])) {
