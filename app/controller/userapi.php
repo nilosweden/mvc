@@ -13,9 +13,9 @@ class UserApi extends Controller
         echo View::json($cls->getMethods());
     }
 
-    public function add(array $arg1, array $arg2, $token)
+    public function add(array $arg1, array $arg2)
     {
-        echo View::json([Session::get("token"), $token, $arg1, $arg2]);
+        echo View::json([Session::get('test'), $arg1, $arg2]);
     }
 
     public function remove($username)

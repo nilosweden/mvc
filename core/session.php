@@ -13,12 +13,6 @@ class Session
         }
     }
 
-    public static function newToken()
-    {
-        $_SESSION['token'] = bin2hex(random_bytes(32));
-        return $_SESSION['token'];
-    }
-
     public static function set($key, $value)
     {
         $_SESSION[$key] = $value;
