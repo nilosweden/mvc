@@ -14,7 +14,7 @@ class Api extends Controller
 
     public function userApi()
     {
-        $reflection = new \app\model\Api("\app\controller\UserApi");
-        echo View::json($reflection->getMethods());
+        $cls = new \app\model\Api("\app\controller\UserApi");
+        echo View::json($cls->getMethods());
     }
 }
