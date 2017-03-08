@@ -12,7 +12,7 @@ class View
     {
         $file = 'app/view/' . mb_strtolower($view) . '.php';
         if (!file_exists($file)) {
-            throw new LoadException('View does not exist: ' . $view);
+            throw new ViewException('View does not exist: ' . $view);
         }
         ob_start();
         require($file);
