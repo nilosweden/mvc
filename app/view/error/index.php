@@ -34,7 +34,7 @@
         <br>
         <br>
         <b>Trace:</b>
-        <pre><?php write($exception->getTraceAsString()); ?></pre>
+        <pre><?= backtrace($exception); ?></pre>
     </p>
   </div>
 </div>
