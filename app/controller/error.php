@@ -5,13 +5,16 @@ use core\Controller as Controller;
 use core\View as View;
 use Exception;
 
+class TestException extends Exception
+{}
+
 class Error extends Controller
 {
     public function index()
     {
         echo View::page(
             'error/index',
-            new Exception("This is a test exception to show you how the error page looks")
+            new TestException("This is a test exception to show you how the error page looks")
         );
     }
 

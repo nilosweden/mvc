@@ -141,7 +141,12 @@ class Parser
     private function parsePostArguments()
     {
         if (CSRF::isset()) {
-            CSRF::check($_POST[CSRF::name()] ?? '');
+            try {
+                CSRF::check($_POST[CSRF::name()] ?? '');
+            }
+            catch (CSRFException $e) {
+                throw new ParserException($e->getMessage(), $e->getCode(), $e);
+            }
         }
         if (!empty($this->unparsedArguments)) {
             throw new RouteException(
@@ -192,7 +197,7 @@ class Parser
     private function validateArguments()
     {
         foreach ($this->methodParameters as $index => $param) {
-            if (empty($this->params[$index])) {
+            if ($param['optional'] == false && empty($this->params[$index])) {
                 throw new ParserException(
                     'You are missing parameter "' . $param['name'] . '" for method ' . $this->method . '()'
                 );

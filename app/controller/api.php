@@ -3,18 +3,19 @@ namespace app\controller;
 
 use core\Controller as Controller;
 use core\View as View;
+use \app\model\Api as ApiModel;
 
 class Api extends Controller
 {
     public function index()
     {
-        $cls = new \app\model\Api($this);
-        echo View::json($cls->getMethods());
+        $methods = ApiModel::getMethods($this);
+        echo View::json($methods);
     }
 
     public function userApi()
     {
-        $cls = new \app\model\Api("\app\controller\UserApi");
-        echo View::json($cls->getMethods());
+        $methods = ApiModel::getMethods('\app\controller\UserApi');
+        echo View::json($methods);
     }
 }

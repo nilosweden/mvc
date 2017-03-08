@@ -4,13 +4,14 @@ namespace app\controller;
 use core\Controller as Controller;
 use core\View as View;
 use core\Session as Session;
+use \app\model\Api as ApiModel;
 
 class UserApi extends Controller
 {
     public function index()
     {
-        $cls = new \app\model\Api($this);
-        echo View::json($cls->getMethods());
+        $methods = ApiModel::getMethods($this);
+        echo View::json($methods);
     }
 
     public function add(array $arg1, array $arg2)
@@ -18,7 +19,7 @@ class UserApi extends Controller
         echo View::json([Session::get('test'), $arg1, $arg2]);
     }
 
-    public function remove($username)
+    public function remove($username = null)
     {
         echo View::json($username);
     }

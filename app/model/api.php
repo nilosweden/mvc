@@ -6,10 +6,9 @@ use ReflectionMethod;
 
 class Api
 {
-    protected $apiMethods = [];
-
-    public function __construct($class, array $excludeMethods = [])
+    public static function getMethods($class, array $excludeMethods = [])
     {
+        $apiMethods = [];
         if (is_subclass_of($class, '\app\core\Controller')) {
             $reflectionClass = new ReflectionClass('\app\core\Controller');
             $methods = $reflectionClass->getMethods(ReflectionMethod::IS_PUBLIC);
@@ -29,23 +28,20 @@ class Api
             $methodName = $method->getName();
             $methodComment = $method->getDocComment();
             if (!in_array($methodName, $excludeMethods)) {
-                $this->apiMethods[$index] = array(
+                $apiMethods[$index] = array(
                     'name' => $methodName,
                     'comment' => $methodComment
                 );
                 foreach ($methodParams as $param) {
-                    $this->apiMethods[$index]['params'][] = array(
+                    $apiMethods[$index]['params'][] = array(
                         'name' => $param->name,
+                        'type' => (string)$param->getType(),
                         'optional' => $param->isOptional()
                     );
                 }
             }
             ++$index;
         }
-    }
-
-    public function getMethods()
-    {
-        return $this->apiMethods;
+        return $apiMethods;
     }
 }
