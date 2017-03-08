@@ -13,10 +13,6 @@ function backtrace(Exception $e, array $seen=[])
         $starter = 'Caused by: ';
     }
 
-    if (!$seen) {
-        $seen = [];
-    }
-
     $trace = $e->getTrace();
     $prev = $e->getPrevious();
     $result[] = sprintf('%s%s: %s', $starter, get_class($e), $e->getMessage());
@@ -25,7 +21,7 @@ function backtrace(Exception $e, array $seen=[])
 
     while (true) {
         $current = "$file:$line";
-        if (is_array($seen) && in_array($current, $seen)) {
+        if (in_array($current, $seen)) {
             $result[] = sprintf(' ... %d more', count($trace) + 1);
             break;
         }
@@ -55,10 +51,7 @@ function backtrace(Exception $e, array $seen=[])
             $line === null ? '' : $line
         );
 
-        if (is_array($seen)) {
-            $seen[] = "$file:$line";
-        }
-
+        $seen[] = "$file:$line";
         if (!count($trace)) {
             break;
         }
