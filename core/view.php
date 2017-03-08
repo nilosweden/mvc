@@ -3,23 +3,16 @@ namespace core;
 
 use Exception;
 
-class LoadException extends CoreException
+class ViewException extends CoreException
 {}
 
-class Load
+class View
 {
-    private $session = null;
-
-    public function __construct(Session $session)
+    public static function page($view, $data = null)
     {
-        $this->session = $session;
-    }
-
-    public function view($view, $data = null)
-    {
-        $file = 'app/views/' . mb_strtolower($view) . '.php';
+        $file = 'app/view/' . mb_strtolower($view) . '.php';
         if (!file_exists($file)) {
-            throw new LoadException(sprintf('View: %s does not exist', $view));
+            throw new LoadException('View does not exist: ' . $view);
         }
         ob_start();
         require($file);
@@ -28,7 +21,7 @@ class Load
         return ob_get_clean();
     }
 
-    public function json($jsonData, $errorMessage = null)
+    public static function json($jsonData, $errorMessage = null)
     {
         $result = array();
 

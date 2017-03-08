@@ -1,12 +1,13 @@
 <?php declare(strict_types=1);
-namespace app\controllers;
+namespace app\controller;
 
 use core\Controller as Controller;
+use core\View as View;
 
 class Index extends Controller
 {
     public function index()
     {
-        echo $this->load->view('index/index');
+        echo View::page('index/index');
     }
 }

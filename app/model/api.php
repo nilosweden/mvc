@@ -1,10 +1,10 @@
 <?php declare(strict_types=1);
-namespace app\models;
+namespace app\model;
 
 use ReflectionClass;
 use ReflectionMethod;
 
-class ApiReflection
+class Api
 {
     protected $apiMethods = [];
 
@@ -19,9 +19,11 @@ class ApiReflection
                 }
             }
         }
+
         $reflectionClass = new ReflectionClass($class);
         $methods = $reflectionClass->getMethods(ReflectionMethod::IS_PUBLIC);
         $index = 0;
+
         foreach ($methods as $method) {
             $methodParams = $method->getParameters();
             $methodName = $method->getName();

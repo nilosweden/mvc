@@ -13,9 +13,10 @@ class Bootstrap
     public static function init($callback)
     {
         set_error_handler('core\Bootstrap::errorHandler');
+        self::autoload();
+
+        Session::init();
         require('global.php');
-        require('autoloader.php');
-        Autoloader::register();
         require('lib/autoload.php');
         if ($callback !== null && is_callable($callback, false)) {
             $callback();
@@ -29,5 +30,16 @@ class Bootstrap
             return false;
         }
         throw new ErrorException($errstr, 0, $errno, $errfile, $errline);
+    }
+
+    private static function autoload()
+    {
+        spl_autoload_register(function($className) {
+            $className = mb_strtolower(str_replace('\\', '/', $className));
+            $file = dirname(__DIR__) . '/' . $className . '.php';
+            if (is_readable($file)) {
+                require_once($file);
+            }
+        });
     }
 }

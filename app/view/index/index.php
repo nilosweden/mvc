@@ -41,7 +41,7 @@ if ($type != '') {
     <label>Arg2:</label>
     <input type="text" name="arg2" placeholder="json array or object" value='["key1", "key2", 15]'>
     <br>
-    <input type="hidden" name="token" value="<?= $this->session->generateToken(); ?>">
+    <input type="hidden" name="token" value="<?= core\Session::newToken(); ?>">
     <input type="submit">
     </form>
   </div>

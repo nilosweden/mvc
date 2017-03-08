@@ -27,6 +27,6 @@ catch (Exception $e) {
      *
      * ErrorException               Catchable errors will also throw ErrorException
      */
-    $errorPage = new \app\Controllers\Error();
+    $errorPage = new \app\Controller\Error();
     $errorPage->viewException($e);
 }
