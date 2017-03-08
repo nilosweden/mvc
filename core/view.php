@@ -1,8 +1,6 @@
 <?php declare(strict_types=1);
 namespace core;
 
-use Exception;
-
 class ViewException extends CoreException
 {}
 
