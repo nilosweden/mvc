@@ -1,7 +1,32 @@
 <?php
-require('app/core/bootstrap.php');
-use app\core\Bootstrap;
+require('core/bootstrap.php');
+use core\Bootstrap;
 
-Bootstrap::init(function() {
-    //load database and stuff here
-});
+try {
+    Bootstrap::init(function() {
+        /**
+         * You can init your database setup here
+         * Everything is loaded at this point but not yet routed
+         */
+    });
+}
+catch (Exception $e) {
+    /**
+     * You can catch all exceptions here to either show them in your own view
+     * or simply log everything somewhere and show an 404 page
+     *
+     * The following exceptions can be thrown from the core, catching a CoreException will catch
+     * all the derived exceptions as well
+     *
+     * CoreException                Base exception for all core exceptions
+     *      ControllerException     Inherits from CoreException
+     *      LoadException           Inherits from CoreException
+     *      ParserException         Inherits from CoreException
+     *      RouteException          Inherits from CoreException
+     *      SessionException        Inherits from CoreException
+     *
+     * ErrorException               Catchable errors will also throw ErrorException
+     */
+    $errorPage = new \app\Controllers\Error();
+    $errorPage->viewException($e);
+}
