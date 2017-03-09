@@ -140,13 +140,11 @@ class Parser
 
     private function parsePostArguments()
     {
-        if (CSRF::isset()) {
-            try {
-                CSRF::check($_POST[CSRF::name()] ?? '');
-            }
-            catch (CSRFException $e) {
-                throw new ParserException($e->getMessage(), $e->getCode(), $e);
-            }
+        try {
+            CSRF::check($_POST[CSRF::name()] ?? '');
+        }
+        catch (CSRFException $e) {
+            throw new ParserException($e->getMessage(), $e->getCode(), $e);
         }
         if (!empty($this->unparsedArguments)) {
             throw new RouteException(
