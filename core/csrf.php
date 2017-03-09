@@ -41,8 +41,8 @@ class CSRF
         }
         catch (SessionException $e) {
             throw new CSRFException(
-                'Failed to get the CSRF token since it was never set, with message: ' . $e->getMessage()
-                , $e->getCode(),
+                'Failed to get the CSRF token since it was never set, with message: ' . $e->getMessage(), 
+                $e->getCode(),
                 $e
             );
         }
