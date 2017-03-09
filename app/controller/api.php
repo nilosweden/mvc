@@ -7,12 +7,18 @@ use \app\model\Api as ApiModel;
 
 class Api extends Controller
 {
+    /**
+     * @accept POST, DELETE
+     */
     public function index()
     {
         $methods = ApiModel::getMethods($this);
         echo View::json($methods);
     }
 
+    /**
+     * @accept GET
+     */
     public function userApi()
     {
         $methods = ApiModel::getMethods('\app\controller\UserApi');

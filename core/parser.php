@@ -13,19 +13,20 @@ class Parser
     private $method = 'index';
     private $params = [];
     private $methodParameters = [];
+    private $requestType = null;
 
     public function __construct()
     {
-        $this->parse();
-    }
-
-    private function parse()
-    {
+        $this->requestType = $_SERVER['REQUEST_METHOD'] ?? null;
         $this->parseUrl();
         $this->getParametersForMethod();
+        $this->parseArguments();
+        $this->validateArguments();
+    }
 
-        $method = $_SERVER['REQUEST_METHOD'] ?? '';
-        switch($method)
+    private function parseArguments()
+    {
+        switch($this->requestType)
         {
             case 'POST':
                 $this->parsePostArguments();
@@ -41,10 +42,9 @@ class Parser
                 break;
             default:
                 throw new ParserException(
-                    'The request type "' . $method . '" is not supported'
+                    'The request type "' . $this->requestType . '" is not supported'
                 );
         }
-        $this->validateArguments();
     }
 
     public function getParameters() : array
@@ -128,7 +128,22 @@ class Parser
             throw new ParserException('Method "' . $this->method . '" does not exist');
         }
 
-        $params = $ref->getMethod($this->method)->getParameters();
+        $methodObj = $ref->getMethod($this->method);
+        $comment = $methodObj->getDocComment();
+        if ($comment) {
+            $matches = [];
+            preg_match('/@accept ([a-zA-Z ,]+)/', $comment, $matches);
+            if (isset($matches[1])) {
+                $requestMethods = explode(', ', $matches[1]);
+                if (!in_array($this->requestType, $requestMethods)) {
+                    throw new ParserException(
+                        'Method "' . $this->method . '" does not accept a ' . $this->requestType . ' request'
+                    );
+                }
+            }
+        }
+
+        $params = $methodObj->getParameters();
         foreach ($params as $param) {
             $this->methodParameters[] = [
                 "name" => $param->getName(),
@@ -140,12 +155,6 @@ class Parser
 
     private function parsePostArguments()
     {
-        try {
-            CSRF::check($_POST[CSRF::name()] ?? '');
-        }
-        catch (CSRFException $e) {
-            throw new ParserException($e->getMessage(), $e->getCode(), $e);
-        }
         if (!empty($this->unparsedArguments)) {
             throw new RouteException(
                 'You are not allowed to use multiple request types. Either send args as named arguments'
